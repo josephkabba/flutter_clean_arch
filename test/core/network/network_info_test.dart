@@ -1,29 +1,33 @@
-// ignore: import_of_legacy_library_into_null_safe
-// ignore_for_file: import_of_legacy_library_into_null_safe
-
 import 'package:clean_arch/core/network/network_info.dart';
-import 'package:data_connection_checker/data_connection_checker.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-class MockDataConnectionChecker extends Mock implements DataConnectionChecker {}
+import 'network_info_test.mocks.dart';
 
+@GenerateMocks([InternetConnectionChecker])
 void main() {
-  late NetworkInfoImpl networkInfoImpl;
-  late MockDataConnectionChecker mockDataConnectionChecker;
+  late NetworkInfoImpl networkInfo;
+  late MockInternetConnectionChecker mockInternetConnectionChecker;
 
   setUp(() {
-    mockDataConnectionChecker = MockDataConnectionChecker();
-    networkInfoImpl = NetworkInfoImpl(mockDataConnectionChecker);
+    mockInternetConnectionChecker = MockInternetConnectionChecker();
+    networkInfo = NetworkInfoImpl(mockInternetConnectionChecker);
   });
 
-  group("isConnected", () {
-    test("should forward the call to DataConnectionChecker.hasConnection", () {
+  group('isConnected', () {
+    test('should forward the call to InternetConnectionChecker.hasConnection',
+        () async {
+      //arrange
       final tHasConnectionFuture = Future.value(true);
-      when(mockDataConnectionChecker.hasConnection)
+      when(mockInternetConnectionChecker.hasConnection)
           .thenAnswer((_) => tHasConnectionFuture);
-      final result = networkInfoImpl.isConnected;
-      verify(mockDataConnectionChecker.hasConnection);
+
+      //act
+      final result = networkInfo.isConnected;
+      //assert
+      verify(mockInternetConnectionChecker.hasConnection);
       expect(result, tHasConnectionFuture);
     });
   });
